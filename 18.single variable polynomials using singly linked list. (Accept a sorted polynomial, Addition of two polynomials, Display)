@@ -1,1 +1,109 @@
+18.Write a C program to perform the following operations on single variable polynomials using singly linked list.
+Accept a sorted polynomial
+Addition of two polynomials
+Display
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+struct Term {
+int coef, exp;
+struct Term *next;
+};
+struct Term *createTerm(int coef, int exp) {
+struct Term *term = (struct Term *)malloc(sizeof(struct Term));
+term->coef = coef;
+term->exp = exp;
+term->next = NULL;
+return term;
+}
+void insertTerm(struct Term **head, int coef, int exp) {
+struct Term *term = createTerm(coef, exp);
+if (*head == NULL || exp > (*head)->exp) {
+term->next = *head;
+*head = term;
+} else {
+struct Term *current = *head;
+while (current->next != NULL && exp < current->next->exp) {
+current = current->next;
+}
+term->next = current->next;
+current->next = term;
+}
+}
+void displayPolynomial(struct Term *head) {
+while (head != NULL) {
+printf("%dx^%d", head->coef, head->exp);
+head = head->next;
+if (head != NULL) {
+printf(" + ");
+}
+}
+printf("\n");
+}
+struct Term *addPolynomials(struct Term *poly1, struct Term *poly2) {
+struct Term *result = NULL;
+while (poly1 != NULL && poly2 != NULL) {
+if (poly1->exp > poly2->exp) {
+insertTerm(&result, poly1->coef, poly1->exp);
+poly1 = poly1->next;
+} else if (poly1->exp < poly2->exp) {
+insertTerm(&result, poly2->coef, poly2->exp);
+poly2 = poly2->next;
+} else {
+// Exponents are equal, add coefficients
+insertTerm(&result, poly1->coef + poly2->coef, poly1->exp);
+poly1 = poly1->next;
+poly2 = poly2->next;
+}
+}
+while (poly1 != NULL) {
+insertTerm(&result, poly1->coef, poly1->exp);
+poly1 = poly1->next;
+}
+while (poly2 != NULL) {
+insertTerm(&result, poly2->coef, poly2->exp);
+poly2 = poly2->next;
+}
+return result;
+}
+int main() {
+struct Term *poly1 = NULL, *poly2 = NULL, *result = NULL;
+int n, i, coef, exp;
+printf("Enter the number of terms in the first polynomial: ");
+scanf("%d", &n);
+printf("Enter the terms for the first polynomial (sorted by exponent):\n");
+for (i = 0; i < n; i++) {
+printf("Coefficient: ");
+scanf("%d", &coef);
+printf("Exponent: ");
+scanf("%d", &exp);
+insertTerm(&poly1, coef, exp);
+}
+printf("Enter the number of terms in the second polynomial: ");
+scanf("%d", &n);
+printf("Enter the terms for the second polynomial (sorted by exponent):\n");
+for (i = 0; i < n; i++) {
+printf("Coefficient: ");
+scanf("%d", &coef);
+printf("Exponent: ");
+scanf("%d", &exp);
+insertTerm(&poly2, coef, exp);
+}
+printf("First polynomial: ");
+displayPolynomial(poly1);
+printf("Second polynomial: ");
+displayPolynomial(poly2);
+result = addPolynomials(poly1, poly2);
+printf("Resultant Polynomial (Sum): ");
+displayPolynomial(result);
+// Free memory
+free(poly1);
+free(poly2);
+free(result);
+return 0;
+}
 
