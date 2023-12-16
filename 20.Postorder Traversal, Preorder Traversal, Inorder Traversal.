@@ -1,1 +1,136 @@
+20.Postorder Traversal, Preorder Traversal, Inorder Traversal.
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <alloc.h>
+struct Node {
+int data;
+struct Node* left;
+struct Node* right;
+};
+struct Node* createNode(int data) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = newNode->right = NULL;
+return newNode;
+}
+struct Node* insertNode(struct Node* root, int data) {
+if (root == NULL)
+return createNode(data);
+struct Node* temp = root;
+struct Node* parent = NULL;
+while (temp != NULL) {
+parent = temp;
+if (data < temp->data)
+temp = temp->left;
+else
+temp = temp->right;
+}
+if (data < parent->data)
+parent->left = createNode(data);
+else
+parent->right = createNode(data);
+return root;
+}
+void postorderTraversal(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+struct Node* prev = NULL;
+do {
+while (root != NULL) {
+stack[++top] = root;
+root = root->left;
+}
+while (root == NULL && top != -1) {
+root = stack[top];
+if (root->right == NULL || root->right == prev) {
+printf("%d ", root->data);
+top--;
+prev = root;
+root = NULL;
+} else {
+root = root->right;
+}
+}
+} while (top != -1);
+}
+void preorderTraversal(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+stack[++top] = root;
+while (top >= 0) {
+struct Node* node = stack[top--];
+printf("%d ", node->data);
+if (node->right != NULL)
+stack[++top] = node->right;
+if (node->left != NULL)
+stack[++top] = node->left;
+}
+}
+void inorderTraversal(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+while (root != NULL || top != -1) {
+while (root != NULL) {
+stack[++top] = root;
+root = root->left;
+}
+if (top != -1) {
+root = stack[top--];
+printf("%d ", root->data);
+root = root->right;
+}
+}
+}
+int main() {
+struct Node* root = NULL;
+int choice, data;
+do {
+printf("\n1. Insert Node\n");
+printf("2. Postorder Traversal\n");
+printf("3. Preorder Traversal\n");
+printf("4. Inorder Traversal\n");
+printf("5. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+root = insertNode(root, data);
+break;
+case 2:
+printf("Postorder Traversal: ");
+postorderTraversal(root);
+printf("\n");
+break;
+case 3:
+printf("Preorder Traversal: ");
+preorderTraversal(root);
+printf("\n");
+break;
+case 4:
+printf("Inorder Traversal: ");
+inorderTraversal(root);
+printf("\n");
+break;
+case 5:
+printf("Exiting program.\n");
+break;
+default:
+printf("Invalid choice. Please enter a valid option.\n");
+}
+} while (choice != 5);
+getch();
+return 0;
+}
+
 
