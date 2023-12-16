@@ -1,1 +1,84 @@
+25. Write a C program to display the leaf nodes level-wise
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+// Structure to represent a node in a binary tree
+struct Node {
+int data;
+struct Node* left;
+struct Node* right;
+};
+struct Node* queue[100];
+int front = -1, rear = -1;
+// Function to create a new node
+struct Node* createNode(int data) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = NULL;
+newNode->right = NULL;
+return newNode;
+}
+// Function to print leaf nodes level-wise
+void printLeafNodesLevelWise(struct Node* root) {
+if (root == NULL) {
+return;
+}
+// Create a queue for level order traversal
+queue[++rear] = root;
+queue[++rear] = NULL; // Using NULL as a marker for the end of a level
+printf("Binary Tree (Level Order):\n");
+while (front < rear) {
+struct Node* current = queue[++front];
+if (current == NULL) {
+if (front < rear) {
+// If the current level is not finished, add a marker for the next level
+queue[++rear] = NULL;
+printf("\n");
+}
+} else {
+// Display the data of the current node
+printf("%d ", current->data);
+// Enqueue the left and right children if they exist
+if (current->left != NULL) {
+queue[++rear] = current->left;
+}
+if (current->right != NULL) {
+queue[++rear] = current->right;
+}
+}
+}
+}
+// Function to display leaf nodes
+void displayLeafNodes(struct Node* root) {
+if (root == NULL) {
+return;
+}
+if (root->left == NULL && root->right == NULL) {
+// If the current node is a leaf node, print its data
+printf("%d ", root->data);
+}
+// Recursively display leaf nodes in the left and right subtrees
+displayLeafNodes(root->left);
+displayLeafNodes(root->right);
+}
+int main() {
+// Constructing a sample binary tree
+struct Node* root = createNode(1);
+root->left = createNode(2);
+root->right = createNode(3);
+root->left->left = createNode(4);
+root->left->right = createNode(5);
+root->right->left = createNode(6);
+root->right->right = createNode(7);
+root->right->right->left = createNode(8);
+// Displaying the binary tree in level order
+printLeafNodesLevelWise(root);
+// Displaying leaf nodes
+printf("\nLeaf nodes: ");
+displayLeafNodes(root);
+getch();
+return 0;
+}
 
