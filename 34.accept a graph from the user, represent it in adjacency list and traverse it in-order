@@ -1,1 +1,65 @@
+34.Write a C program to accept a graph from the user, represent it in adjacency list and traverse it in-order
 
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+// Node structure to represent vertices in the adjacency list
+struct Node {
+int data;
+struct Node* next;
+};
+// Graph structure with an array of linked lists
+struct Graph {
+int vertices;
+struct Node** adjList;
+};
+// Function to create a new node
+struct Node* createNode(int vertex) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = vertex;
+newNode->next = NULL;
+return newNode;
+}
+// Function to add an edge to the adjacency list
+void addEdge(struct Graph* graph, int src, int dest) {
+struct Node* newNode = createNode(dest);
+newNode->next = graph->adjList[src];
+graph->adjList[src] = newNode;
+}
+// Function to traverse the graph in the order of linked lists
+void inOrderTraversal(struct Graph* graph) {
+int i;
+printf("In-Order Traversal:\n");
+for (i = 0; i < graph->vertices; i++) {
+struct Node* temp = graph->adjList[i];
+while (temp != NULL) {
+printf("%d -> ", temp->data);
+temp = temp->next;
+}
+printf("NULL\n");
+}
+}
+int main() {
+int i, k, src, dest, numEdges;
+// Create a graph and add edges based on user input
+struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+printf("Enter the number of vertices: ");
+scanf("%d", &(graph->vertices));
+graph->adjList = (struct Node**)malloc(graph->vertices * sizeof(struct Node*));
+// Initialize adjacency list
+for (i = 0; i < graph->vertices; i++) {
+graph->adjList[i] = NULL;
+}
+printf("Enter the number of edges: ");
+scanf("%d", &numEdges);
+printf("Enter the edges (src dest):\n");
+for (k = 0; k < numEdges; k++) {
+scanf("%d %d", &src, &dest);
+addEdge(graph, src, dest);
+}
+// Perform in-order traversal
+inOrderTraversal(graph);
+return 0;
+}
