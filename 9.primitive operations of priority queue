@@ -1,1 +1,75 @@
+9.Write a C program to implement the primitive operations of priority queue
 
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define MAX_SIZE 100
+// Structure to represent the priority queue
+struct PriorityQueue {
+int data[MAX_SIZE];
+int priority[MAX_SIZE];
+int front, rear;
+};
+// Function to create a new priority queue
+struct PriorityQueue* createPriorityQueue() {
+struct PriorityQueue* pq = (struct PriorityQueue*)malloc(sizeof(struct PriorityQueue));
+pq->front = -1;
+pq->rear = -1;
+return pq;
+}
+// Function to check if the priority queue is empty
+int isEmpty(struct PriorityQueue* pq) {
+return pq->front == -1;
+}
+// Function to check if the priority queue is full
+int isFull(struct PriorityQueue* pq) {
+return pq->rear == MAX_SIZE - 1;
+}
+// Function to insert a new node with given priority into the priority queue
+void enqueue(struct PriorityQueue* pq, int d, int p) {
+if (isFull(pq)) {
+printf("Queue is full. Cannot enqueue.\n");
+return;
+}
+if (isEmpty(pq)) {
+pq->front = 0;  // Adjust front pointer if the queue was empty
+}
+// Increment the rear index
+pq->rear++;
+// Add data and priority to the arrays
+pq->data[pq->rear] = d;
+pq->priority[pq->rear] = p;
+}
+// Function to display the elements of the priority queue
+void display(struct PriorityQueue* pq) {
+int i;
+if (isEmpty(pq)) {
+printf("Priority Queue is empty.\n");
+return;
+}
+printf("Priority Queue: ");
+for (i = pq->front; i <= pq->rear; ++i) {
+printf("(%d, %d) ", pq->data[i], pq->priority[i]);
+}
+printf("\n");
+}
+int main() {
+struct PriorityQueue* pq = createPriorityQueue();
+int i;
+// Get user input and enqueue elements with priorities
+int data, priority;
+for (i = 0; i < 3; ++i) {
+printf("Enter data and priority (e.g., 10 2): ");
+scanf("%d %d", &data, &priority);
+enqueue(pq, data, priority);
+}
+// Display the priority queue
+display(pq);
+// Clear screen before exiting
+clrscr();
+getch();
+return 0;
+}
