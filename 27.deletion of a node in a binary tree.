@@ -1,1 +1,125 @@
+27. Write a C program to perform all primitive operations of deletion of a node in a binary tree
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <alloc.h>
+struct Node {
+int data;
+struct Node *left, *right;
+};
+struct Node *createNode(int data) {
+struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = newNode->right = NULL;
+return newNode;
+}
+struct Node *insert(struct Node *root, int data) {
+if (root == NULL) {
+return createNode(data);
+}
+if (data < root->data) {
+root->left = insert(root->left, data);
+} else if (data > root->data) {
+root->right = insert(root->right, data);
+}
+return root;
+}
+struct Node *findMin(struct Node *root) {
+while (root->left != NULL) {
+root = root->left;
+}
+return root;
+}
+struct Node *deleteNode(struct Node *root, int key) {
+struct Node *temp;
+if (root == NULL) {
+return root;
+}
+if (key < root->data) {
+root->left = deleteNode(root->left, key);
+} else if (key > root->data) {
+root->right = deleteNode(root->right, key);
+} else {
+// Node with only one child or no child
+if (root->left == NULL) {
+struct Node *temp = root->right;
+free(root);
+return temp;
+} else if (root->right == NULL) {
+struct Node *temp = root->left;
+free(root);
+return temp;
+}
+// Node with two children: Get the inorder successor (smallest
+// in the right subtree)
+temp = findMin(root->right);
+// Copy the inorder successor's data to this node
+root->data = temp->data;
+// Delete the inorder successor
+root->right = deleteNode(root->right, temp->data);
+}
+return root;
+}
+void deleteTree(struct Node *root) {
+if (root != NULL) {
+deleteTree(root->left);
+deleteTree(root->right);
+free(root);
+}
+}
+void inOrderTraversal(struct Node *root) {
+if (root != NULL) {
+inOrderTraversal(root->left);
+printf("%d ", root->data);
+inOrderTraversal(root->right);
+}
+}
+int main() {
+struct Node *root = NULL;
+int choice, keyToDelete, value;
+int i;
+do {
+printf("\nBinary Tree Menu:\n");
+printf("1. Insert Node\n");
+printf("2. Display In-order Traversal\n");
+printf("3. Delete Node\n");
+printf("4. Delete Entire Tree\n");
+printf("5. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter the value to insert: ");
+scanf("%d", &value);
+root = insert(root, value);
+printf("Node %d inserted.\n", value);
+break;
+case 2:
+printf("In-order Traversal: ");
+inOrderTraversal(root);
+printf("\n");
+break;
+case 3:
+printf("Enter the key to delete: ");
+scanf("%d", &keyToDelete);
+root = deleteNode(root, keyToDelete);
+printf("Node %d deleted.\n", keyToDelete);
+break;
+case 4:
+deleteTree(root);
+printf("Tree deleted.\n");
+break;
+case 5:
+printf("Exiting program.\n");
+break;
+default:
+printf("Invalid choice. Please enter a valid option.\n");
+break;
+}
+} while (choice != 5);
+getch();
+return 0;
+}
 
