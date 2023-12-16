@@ -1,1 +1,80 @@
+19.Write a C program to accept two sorted single linked lists and merge them in a single linked list in such a way that the resultant linked list will be a sorted one
 
+
+
+#include <stdio.h>
+#include<stdlib.h>
+struct Term{
+struct Term *next;
+int data;
+};
+void insert(struct Term **head,int data){
+struct Term term=(struct Term)malloc(sizeof(struct Term));
+term->data=data;
+term->next=NULL;
+if(*head==NULL){
+*head=term;
+return;
+}
+struct Term *current=*head;
+while(current->next!=NULL){
+current=current->next;
+};
+current->next=term;
+}
+struct Term *mergesortlist(struct Term *list1,struct Term *list2){
+struct Term *mergelist=NULL;
+while(list1!=NULL && list2!=NULL){
+if(list1->data < list2->data){
+insert(&mergelist,list1->data);
+list1=list1->next;
+}else{
+insert(&mergelist,list2->data);
+list2=list2->next;
+}
+}
+while(list1!=NULL){
+insert(&mergelist,list1->data);
+list1=list1->next;
+}
+while(list2!=NULL){
+insert(&mergelist,list2->data);
+list2=list2->next;
+}
+return mergelist;
+}
+void display(struct Term *head){
+struct Term *current=head;
+while(current!=NULL){
+printf("%d ->",current->data);
+current=current->next;
+} printf("NULL\n");
+}
+int main(){
+struct Term *list1=NULL;
+struct Term *list2=NULL;
+struct Term *mergelist=NULL;
+int i,n1,n2,data;
+printf("enter the number of elements in 1st list");
+scanf("%d",&n1);
+printf("the elements should be in asceneding order: \n");
+for(i=0;i<n1;i++){
+scanf("%d",&data);
+insert(&list1,data);
+}
+printf("enter the number of elements in 2nd list");
+scanf("%d",&n2);
+printf("the elements should be in asceneding order: \n");
+for(i=0;i<n2;i++){
+scanf("%d",&data);
+insert(&list2,data);
+}
+printf("first sorted lisr\n");
+display(list1);
+printf("2nd sorted lisr\n");
+display(list2);
+mergelist=mergesortlist(list1,list2);
+printf("merged sorted list:");
+display(mergelist);
+return 0;
+}
