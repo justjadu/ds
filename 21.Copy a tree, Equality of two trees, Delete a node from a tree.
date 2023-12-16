@@ -1,1 +1,211 @@
+21.Copy a tree, 2. Equality of two trees, 3. Delete a node from a tree.
 
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <alloc.h>
+struct Node {
+int data;
+struct Node* left;
+struct Node* right;
+};
+struct Node* createNode(int data) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = newNode->right = NULL;
+return newNode;
+}
+struct Node* insertNode(struct Node* root, int data) {
+if (root == NULL)
+return createNode(data);
+struct Node* temp = root;
+struct Node* parent = NULL;
+while (temp != NULL) {
+parent = temp;
+if (data < temp->data)
+temp = temp->left;
+else
+temp = temp->right;
+}
+if (data < parent->data)
+parent->left = createNode(data);
+else
+parent->right = createNode(data);
+return root;
+}
+void inorderTraversal(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+while (root != NULL || top != -1) {
+while (root != NULL) {
+stack[++top] = root;
+root = root->left;
+}
+if (top != -1) {
+root = stack[top--];
+printf("%d ", root->data);
+root = root->right;
+}
+}
+}
+struct Node* copyTree(struct Node* root) {
+if (root == NULL)
+return NULL;
+struct Node* newRoot = createNode(root->data);
+struct Node* stack[100];
+struct Node* newStack[100];
+int top = -1;
+stack[++top] = root;
+newStack[++top] = newRoot;
+while (top >= 0) {
+struct Node* node = stack[top];
+struct Node* newNode = newStack[top--];
+if (node->right != NULL) {
+stack[++top] = node->right;
+newNode->right = createNode(node->right->data);
+newStack[++top] = newNode->right;
+}
+if (node->left != NULL) {
+stack[++top] = node->left;
+newNode->left = createNode(node->left->data);
+newStack[++top] = newNode->left;
+}
+}
+return newRoot;
+}
+int areTreesEqual(struct Node* root1, struct Node* root2) {
+if (root1 == NULL && root2 == NULL)
+return 1;
+if (root1 == NULL || root2 == NULL)
+return 0;
+struct Node* stack1[100];
+int top1 = -1;
+struct Node* stack2[100];
+int top2 = -1;
+while (root1 != NULL || top1 != -1) {
+while (root1 != NULL) {
+stack1[++top1] = root1;
+root1 = root1->left;
+}
+while (root2 != NULL) {
+stack2[++top2] = root2;
+root2 = root2->left;
+}
+if (top1 != -1 && top2 != -1) {
+root1 = stack1[top1--];
+root2 = stack2[top2--];
+if (root1->data != root2->data)
+return 0;
+root1 = root1->right;
+root2 = root2->right;
+} else {
+return (top1 == -1 && top2 == -1);
+}
+}
+return 1;
+}
+struct Node* deleteNode(struct Node* root, int key) {
+struct Node* parent = NULL;
+struct Node* current = root;
+while (current != NULL && current->data != key) {
+parent = current;
+if (key < current->data)
+current = current->left;
+else
+current = current->right;
+}
+if (current == NULL) {
+printf("Node with key %d not found.\n", key);
+return root;
+}
+// Case 1: Node with only one child or no child
+if (current->left == NULL) {
+struct Node* temp = current->right;
+if (parent == NULL)
+return temp; // Current is the root
+if (current == parent->left)
+parent->left = temp;
+else
+parent->right = temp;
+free(current);
+} else if (current->right == NULL) {
+struct Node* temp = current->left;
+if (parent == NULL)
+return temp; // Current is the root
+if (current == parent->left)
+parent->left = temp;
+else
+parent->right = temp;
+free(current);
+}
+// Case 2: Node with two children
+else {
+struct Node* successor = current->right;
+struct Node* successorParent = NULL;
+while (successor->left != NULL) {
+successorParent = successor;
+successor = successor->left;
+}
+if (successorParent != NULL)
+successorParent->left = successor->right;
+else
+current->right = successor->right;
+current->data = successor->data;
+free(successor);
+}
+printf("Node with key %d deleted.\n", key);
+return root;
+}
+int main() {
+struct Node* root = NULL;
+struct Node* copyRoot = NULL;
+int choice, data;
+do {
+printf("\n1. Insert Node\n");
+printf("2. Inorder Traversal\n");
+printf("3. Copy a Tree\n");
+printf("4. Check Equality of Two Trees\n");
+printf("5. Delete a Node\n");
+printf("6. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+root = insertNode(root, data);
+break;
+case 2:
+printf("Inorder Traversal: ");
+inorderTraversal(root);
+printf("\n");
+break;
+case 3:
+copyRoot = copyTree(root);
+printf("Tree Copied.\n");
+break;
+case 4:
+if (areTreesEqual(root, copyRoot))
+printf("The trees are equal.\n");
+else
+printf("The trees are not equal.\n");
+break;
+case 5:
+printf("Enter the key to delete: ");
+scanf("%d", &data);
+root = deleteNode(root, data);
+break;
+case 6:
+printf("Exiting program.\n");
+break;
+default:
+printf("Invalid choice. Please enter a valid option.\n");
+}
+} while (choice != 6);
+getch();
+return 0;
+}
