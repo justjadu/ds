@@ -1,1 +1,75 @@
+10.Write a C program to check string with parenthesis and validate it using stack
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define MAX_SIZE 100
+// Structure to represent a stack
+struct Stack {
+char items[MAX_SIZE];
+int top;
+};
+// Function to initialize an empty stack
+void initialize(struct Stack* stack) {
+stack->top = -1;
+}
+// Function to check if the stack is empty
+int isEmpty(struct Stack* stack) {
+return stack->top == -1;
+}
+// Function to push an item onto the stack
+void push(struct Stack* stack, char item) {
+if (stack->top == MAX_SIZE - 1) {
+printf("Stack Overflow\n");
+exit(1);
+}
+stack->items[++stack->top] = item;
+}
+// Function to pop an item from the stack
+char pop(struct Stack* stack) {
+if (isEmpty(stack)) {
+printf("Stack Underflow\n");
+exit(1);
+}
+return stack->items[stack->top--];
+}
+// Function to check if a string with parentheses is valid
+int isValidString(char str[]) {
+struct Stack stack;
+initialize(&stack);
+int i;
+for (i = 0; str[i] != '\0'; i++) {
+if (str[i] == '(' || str[i] == '[' || str[i] == '{') {
+push(&stack, str[i]);
+} else if (str[i] == ')' || str[i] == ']' || str[i] == '}') {
+if (isEmpty(&stack)) {
+return 0;  // Unmatched closing parenthesis
+}
+char popped = pop(&stack);
+if ((str[i] == ')' && popped != '(') ||
+(str[i] == ']' && popped != '[') ||
+(str[i] == '}' && popped != '{')) {
+return 0;  // Mismatched parenthesis
+}
+}
+}
+return isEmpty(&stack);  // Stack should be empty for a valid string
+}
+int main() {
+char str[MAX_SIZE];
+// Input string from the user
+printf("Enter a string with parentheses: ");
+gets(str);
+// Check if the string is valid
+if (isValidString(str)) {
+printf("The string is valid.\n");
+} else {
+printf("The string is not valid.\n");
+}
+// Clear screen before exiting
+getch();  // Wait for a key press
+clrscr();  // Clear screen
+return 0;
+}
 
