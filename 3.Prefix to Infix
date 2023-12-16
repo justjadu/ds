@@ -1,1 +1,61 @@
+3./*PREFIX TO INFIX EXPRESSION USING STACK*/
+
+
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+char stack[50][50];
+int top = -1;
+void clear_stack() {
+top = -1;
+}
+void push(char *s) {
+strcpy(stack[++top], s);
+}
+char* pop() {
+return stack[top--];
+}
+int is_operator(char x) {
+if (x == '+' || x == '-' || x == '*' || x == '/') {
+return 1;
+} else {
+return 0;
+}
+}
+// Function to Convert prefix to Postfix
+void convert(char *exp) {
+int i, l;
+char op1[50], op2[50];
+clear_stack();
+l = strlen(exp);
+// Scanning from right to left
+for (i = l - 1; i >= 0; i--) {
+// Checking if the symbol is an operator
+if (is_operator(exp[i])) {
+// Popping two operands from stack
+strcpy(op1, pop());
+strcpy(op2, pop());
+// Concatenating the operands and operator
+sprintf(stack[++top], "%s%c%s", op1,exp[i], op2);
+} else {
+// If it is an operand, push the operand to the stack
+sprintf(stack[++top], "%c", exp[i]);
+}
+}
+// Print the postfix expression
+printf("%s\n", stack[top]);
+}
+// Main function
+int main() {
+char expression[50];
+// Prompt the user to enter the expression
+printf("Enter the prefix expression: ");
+// Read the expression from the user
+fgets(expression, sizeof(expression), stdin);
+// Remove the newline character from the end of the input
+expression[strcspn(expression, "\n")] = '\0';
+// Convert the expression
+convert(expression);
+return 0;
+}
 
