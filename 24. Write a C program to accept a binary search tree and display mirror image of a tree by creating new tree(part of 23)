@@ -1,1 +1,98 @@
+24. Write a C program to accept a binary search tree and display mirror image of a tree by creating new tree(part of 23)
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a node in the binary tree
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function to create a new node with the given data
+struct TreeNode* createNode(int data) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a node into the BST
+struct TreeNode* insertNode(struct TreeNode* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (data < root->data)
+        root->left = insertNode(root->left, data);
+    else if (data > root->data)
+        root->right = insertNode(root->right, data);
+
+    return root;
+}
+
+// Function to display the mirror image of a binary tree
+void displayMirror(struct TreeNode* root) {
+    if (root == NULL)
+        return;
+
+    // Swap the left and right subtrees
+    struct TreeNode* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    // Recursively display the mirror images of left and right subtrees
+    displayMirror(root->left);
+    displayMirror(root->right);
+}
+
+// Function to print the inorder traversal of a binary tree
+void inorderTraversal(struct TreeNode* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+// Function to free the memory allocated for a binary tree
+void freeTree(struct TreeNode* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+int main() {
+    struct TreeNode* root = NULL;
+
+    // Insert nodes into the BST
+    root = insertNode(root, 15);
+    insertNode(root, 10);
+    insertNode(root, 20);
+    insertNode(root, 8);
+    insertNode(root, 12);
+    insertNode(root, 17);
+    insertNode(root, 25);
+
+    printf("Original BST (Inorder traversal): ");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Display the mirror image of the BST
+    displayMirror(root);
+
+    printf("Mirror Image BST (Inorder traversal): ");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Free the memory allocated for the BST
+    freeTree(root);
+
+    return 0;
+}
 
