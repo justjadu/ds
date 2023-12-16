@@ -1,1 +1,131 @@
+23.Display mirror image of a tree by creating new tree, 2. Display mirror image of a tree without creating new tree, 3. Display leaf nodes of a tree
+
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <alloc.h>
+struct Node {
+int data;
+struct Node* left;
+struct Node* right;
+};
+struct Node* createNode(int data) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = newNode->right = NULL;
+return newNode;
+}
+
+struct Node* insertNode(struct Node* root, int data) {
+if (root == NULL)
+return createNode(data);
+struct Node* temp = root;
+struct Node* parent = NULL;
+while (temp != NULL) {
+parent = temp;
+if (data < temp->data)
+temp = temp->left;
+else
+temp = temp->right;
+}
+if (data < parent->data)
+parent->left = createNode(data);
+else
+parent->right = createNode(data);
+return root;
+}
+void displayMirrorImage(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+stack[++top] = root;
+while (top >= 0) {
+struct Node* node = stack[top--];
+printf("%d ", node->data);
+if (node->left != NULL)
+stack[++top] = node->left;
+if (node->right != NULL)
+stack[++top] = node->right;
+}
+}
+void mirrorImageWithoutCreatingNew(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+stack[++top] = root;
+while (top >= 0) {
+struct Node* node = stack[top--];
+// Swap the left and right children
+struct Node* temp = node->left;
+node->left = node->right;
+node->right = temp;
+if (node->right != NULL)
+stack[++top] = node->right;
+if (node->left != NULL)
+stack[++top] = node->left;
+}
+}
+void displayLeafNodes(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* stack[100];
+int top = -1;
+stack[++top] = root;
+while (top >= 0) {
+struct Node* node = stack[top--];
+if (node->right != NULL)
+stack[++top] = node->right;
+if (node->left != NULL)
+stack[++top] = node->left;
+if (node->left == NULL && node->right == NULL)
+printf("%d ", node->data);
+}
+}
+int main() {
+struct Node* root = NULL;
+int choice, data;
+do {
+printf("\n1. Insert Node\n");
+printf("2. Display Mirror Image (Creating New Tree)\n");
+printf("3. Display Mirror Image (Without Creating New Tree)\n");
+printf("4. Display Leaf Nodes\n");
+printf("5. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+root = insertNode(root, data);
+break;
+case 2:
+printf("Mirror Image (Creating New Tree): ");
+displayMirrorImage(root);
+printf("\n");
+break;
+case 3:
+printf("Mirror Image (Without Creating New Tree): ");
+mirrorImageWithoutCreatingNew(root);
+displayMirrorImage(root);
+printf("\n");
+break;
+case 4:
+printf("Leaf Nodes: ");
+displayLeafNodes(root);
+printf("\n");
+break;
+case 5:
+printf("Exiting program.\n");
+break;
+default:
+printf("Invalid choice. Please enter a valid option.\n");
+}
+} while (choice != 5);
+getch();
+return 0;
+}
+
 
