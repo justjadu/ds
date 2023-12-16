@@ -1,1 +1,108 @@
+22.Insert a node in a tree, 2. Display the height of the tree, 3. Display a tree levelwise
+
+
+#include <stdio.h>
+#include <conio.h>
+#include <alloc.h>
+struct Node {
+int data;
+struct Node* left;
+struct Node* right;
+};
+struct Node* createNode(int data) {
+struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+newNode->data = data;
+newNode->left = newNode->right = NULL;
+return newNode;
+}
+struct Node* insertNode(struct Node* root, int data) {
+if (root == NULL)
+return createNode(data);
+struct Node* temp = root;
+struct Node* parent = NULL;
+while (temp != NULL) {
+parent = temp;
+if (data < temp->data)
+temp = temp->left;
+else
+temp = temp->right;
+}
+if (data < parent->data)
+parent->left = createNode(data);
+else
+parent->right = createNode(data);
+return root;
+}
+int heightOfTree(struct Node* root) {
+if (root == NULL)
+return 0;
+struct Node* stack[100];
+int top = -1;
+int height = 0;
+int maxDepth = 0;
+stack[++top] = root;
+while (top >= 0) {
+struct Node* node = stack[top--];
+if (node->right != NULL)
+stack[++top] = node->right;
+if (node->left != NULL)
+stack[++top] = node->left;
+if (node->left == NULL && node->right == NULL) {
+// Leaf node, calculate depth
+if (top + 1 > maxDepth)
+maxDepth = top + 1;
+}
+}
+return maxDepth;
+}
+void displayLevelWise(struct Node* root) {
+if (root == NULL)
+return;
+struct Node* queue[100];
+int front = -1;
+int rear = -1;
+queue[++rear] = root;
+while (front != rear) {
+struct Node* node = queue[++front];
+printf("%d ", node->data);
+if (node->left != NULL)
+queue[++rear] = node->left;
+if (node->right != NULL)
+queue[++rear] = node->right;
+}
+}
+int main() {
+struct Node* root = NULL;
+int choice, data;
+do {
+printf("\n1. Insert Node\n");
+printf("2. Display Height of Tree\n");
+printf("3. Display Tree Levelwise\n");
+printf("4. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("Enter data to insert: ");
+scanf("%d", &data);
+root = insertNode(root, data);
+break;
+case 2:
+printf("Height of the tree: %d\n", heightOfTree(root));
+break;
+case 3:
+printf("Tree Levelwise: ");
+displayLevelWise(root);
+printf("\n");
+break;
+case 4:
+printf("Exiting program.\n");
+break;
+default:
+printf("Invalid choice. Please enter a valid option.\n");
+}
+} while (choice != 4);
+getch();
+return 0;
+}
 
