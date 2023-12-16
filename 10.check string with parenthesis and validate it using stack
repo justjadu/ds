@@ -1,1 +1,132 @@
+2./*INFIX TO PREFIX EXPRESSION USING STACK*/
+
+
+#include <stdio.h>
+#include<conio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#define MAX_SIZE 100
+// Stack implementation
+typedef struct {
+int top;
+char items[MAX_SIZE];
+} Stack;
+void initialize(Stack *s) {
+s->top = -1;
+}
+int isEmpty(Stack *s) {
+return s->top == -1;
+}
+int isFull(Stack *s) {
+return s->top == MAX_SIZE - 1;
+}
+void push(Stack *s, char item) {
+if (isFull(s)) {
+printf("Stack overflow\n");
+exit(EXIT_FAILURE);
+}
+s->items[++s->top] = item;
+}
+char pop(Stack *s) {
+if (isEmpty(s)) {
+printf("Stack underflow\n");
+exit(EXIT_FAILURE);
+}
+return s->items[s->top--];
+}
+char peek(Stack *s) {
+return s->items[s->top];
+}
+int isOperator(char c) {
+return (c == '+' || c == '-' || c == '*' || c == '/');
+}
+int precedence(char c) {
+if (c == '+' || c == '-')
+return 1;
+if (c == '*' || c == '/')
+return 2;
+return 0;
+}
+void infixToPrefix(char infix[], char prefix[]) {
+Stack operators, result;
+int i, j = 0;
+char symbol;
+initialize(&operators);
+initialize(&result);
+for (i = strlen(infix) - 1; i >= 0; i--) {
+symbol = infix[i];
+if (isalnum(symbol)) {
+// Operand
+prefix[j++] = symbol;
+} else if (symbol == ')') {
+// Right parenthesis
+push(&operators, symbol);
+} else if (symbol == '(') {
+// Left parenthesis
+while (!isEmpty(&operators) && peek(&operators) != ')') {
+prefix[j++] = pop(&operators);
+}
+pop(&operators); // Discard the ')'
+} else if (isOperator(symbol)) {
+// Operator
+while (!isEmpty(&operators) && precedence(symbol) < precedence(peek(&operators))) {
+prefix[j++] = pop(&operators);
+}
+push(&operators, symbol);
+}
+}
+// Pop remaining operators from the stack
+while (!isEmpty(&operators)) {
+prefix[j++] = pop(&operators);
+}
+// Null-terminate the prefix expression
+prefix[j] = '\0';
+// Reverse the prefix expression to get the correct order
+strrev(prefix);
+}
+int evaluatePrefix(char prefix[]) {
+Stack s;
+int i, result;
+initialize(&s);
+for (i = 0; prefix[i] != '\0'; i++) {
+char symbol = prefix[i];
+if (isdigit(symbol)) {
+// Operand
+push(&s, symbol - '0');
+} else if (isOperator(symbol)) {
+// Operator
+int operand2 = pop(&s);
+int operand1 = pop(&s);
+switch (symbol) {
+case '+':
+push(&s, operand1 + operand2);
+break;
+case '-':
+push(&s, operand1 - operand2);
+break;
+case '*':
+push(&s, operand1 * operand2);
+break;
+case '/':
+push(&s, operand1 / operand2);
+break;
+}
+}
+}
+result = pop(&s);
+return result;
+}
+int main() {
+char infix[MAX_SIZE], prefix[MAX_SIZE];
+clrscr();
+printf("Enter the infix expression: ");
+scanf("%s", infix);
+infixToPrefix(infix, prefix);
+printf("Prefix expression: %s\n", prefix);
+//    int result = evaluatePrefix(prefix);
+//    printf("Result after evaluation: %d\n", result);
+getch();
+return 0;
+}
 
