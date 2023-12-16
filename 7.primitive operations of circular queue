@@ -1,1 +1,75 @@
+6./*POSTFIX TO INFIX EXPRESSION USING STACK*/
+
+
+#include <stdio.h>
+#include<conio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Global Variable
+char stack[50];
+int top = -1;
+
+// Function to Push Elements into Stack
+void push(char ch) {
+stack[++top] = ch;
+}
+
+// Function to Pop Element From The Stack
+char pop() {
+return stack[top--];
+}
+
+// Function to reverse a string
+void revstr(char str[]) {
+int length = strlen(str);
+int i, j;
+char temp;
+
+for (i = 0, j = length - 1; i < j; i++, j--) {
+temp = str[i];
+str[i] = str[j];
+str[j] = temp;
+}
+}
+
+// Function to convert from postfix to infix
+void convert(char exp[]) {
+int l, i, j = 0;
+char tmp[20];
+revstr(exp);
+l = strlen(exp);
+
+for (i = 0; i < 50; i++) {
+stack[i] = '\0';
+}
+
+printf("\nThe Infix Expression is : ");
+for (i = 0; i < l; i++) {
+if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+push(exp[i]);
+} else {
+tmp[j++] = exp[i];
+tmp[j++] = pop();
+}
+}
+
+tmp[j] = exp[top--];
+revstr(tmp);
+puts(tmp);
+}
+
+// Main Function
+int main() {
+char exp[50];
+clrscr();
+// Taking postfix expression
+printf("\nEnter the Postfix Expression : ");
+gets(exp);
+
+// Calling the function to convert the expression
+convert(exp);
+getch();
+return 0;
+}
 
