@@ -1,75 +1,99 @@
-6./*POSTFIX TO INFIX EXPRESSION USING STACK*/
+7.Write a C program to implement the primitive operations of circular queue
 
 
 #include <stdio.h>
-#include<conio.h>
-#include <stdlib.h>
-#include <string.h>
-
-// Global Variable
-char stack[50];
-int top = -1;
-
-// Function to Push Elements into Stack
-void push(char ch) {
-stack[++top] = ch;
+#include <conio.h>
+#define MAX_SIZE 5
+// Structure to represent the circular queue
+struct CircularQueue {
+int items[MAX_SIZE];
+int front, rear;
+};
+// Function to initialize the circular queue
+void initializeQueue(struct CircularQueue *queue) {
+queue->front = -1;
+queue->rear = -1;
 }
-
-// Function to Pop Element From The Stack
-char pop() {
-return stack[top--];
+// Function to check if the queue is empty
+int isEmpty(struct CircularQueue *queue) {
+return (queue->front == -1 && queue->rear == -1);
 }
-
-// Function to reverse a string
-void revstr(char str[]) {
-int length = strlen(str);
-int i, j;
-char temp;
-
-for (i = 0, j = length - 1; i < j; i++, j--) {
-temp = str[i];
-str[i] = str[j];
-str[j] = temp;
+// Function to check if the queue is full
+int isFull(struct CircularQueue *queue) {
+return (queue->rear + 1) % MAX_SIZE == queue->front;
 }
-}
-
-// Function to convert from postfix to infix
-void convert(char exp[]) {
-int l, i, j = 0;
-char tmp[20];
-revstr(exp);
-l = strlen(exp);
-
-for (i = 0; i < 50; i++) {
-stack[i] = '\0';
-}
-
-printf("\nThe Infix Expression is : ");
-for (i = 0; i < l; i++) {
-if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
-push(exp[i]);
+// Function to add an element to the queue (enqueue)
+void Addq(struct CircularQueue *queue, int value) {
+if (isFull(queue)) {
+printf("\nQueue is full. Cannot add element.\n");
 } else {
-tmp[j++] = exp[i];
-tmp[j++] = pop();
+if (isEmpty(queue)) {
+queue->front = 0;
+}
+queue->rear = (queue->rear + 1) % MAX_SIZE;
+queue->items[queue->rear] = value;
+printf("\n%d added to the queue.\n", value);
 }
 }
-
-tmp[j] = exp[top--];
-revstr(tmp);
-puts(tmp);
+// Function to remove an element from the queue (dequeue)
+void Delq(struct CircularQueue *queue) {
+if (isEmpty(queue)) {
+printf("\nQueue is empty. Cannot delete element.\n");
+} else {
+printf("\n%d deleted from the queue.\n", queue->items[queue->front]);
+if (queue->front == queue->rear) {
+// Queue becomes empty after deletion
+initializeQueue(queue);
+} else {
+queue->front = (queue->front + 1) % MAX_SIZE;
 }
-
-// Main Function
+}
+}
+// Function to display the entire queue
+void display(struct CircularQueue *queue) {
+if (isEmpty(queue)) {
+printf("\nQueue is empty.\n");
+} else {
+int i = queue->front;
+printf("\nQueue elements: ");
+do {
+printf("%d ", queue->items[i]);
+i = (i + 1) % MAX_SIZE;
+} while (i != (queue->rear + 1) % MAX_SIZE);
+printf("\n");
+}
+}
 int main() {
-char exp[50];
-clrscr();
-// Taking postfix expression
-printf("\nEnter the Postfix Expression : ");
-gets(exp);
-
-// Calling the function to convert the expression
-convert(exp);
+struct CircularQueue queue;
+initializeQueue(&queue);
+int choice, value;
+do {
+printf("\nCircular Queue Operations:\n");
+printf("1. Addq (Enqueue)\n");
+printf("2. Delq (Dequeue)\n");
+printf("3. Display\n");
+printf("4. Exit\n");
+printf("Enter your choice: ");
+scanf("%d", &choice);
+switch (choice) {
+case 1:
+printf("\nEnter the element to be added to the queue: ");
+scanf("%d", &value);
+Addq(&queue, value);
+break;
+case 2:
+Delq(&queue);
+break;
+case 3:
+display(&queue);
+break;
+case 4:
+printf("\nExiting the program.\n");
+break;
+default:
+printf("\nInvalid choice. Please enter a valid option.\n");
+}
+} while (choice != 4);
 getch();
 return 0;
 }
-
