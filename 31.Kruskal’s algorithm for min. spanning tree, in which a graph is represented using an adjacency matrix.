@@ -1,69 +1,129 @@
-30. Write a C Program to implement Heap sort using Min heap in ascending order
+31.Write a C Program to implement Kruskal’s algorithm for min. spanning tree, in which a graph is represented using an adjacency matrix.
 
 
 
-int main(){
-int i;
-int arr[]={13,12,8,67,7};
-int n=sizeof(arr)/sizeof(arr[0]);
-clrscr();
-printf("original array:");
-for(i=0;i<n;i++){
-printf("%d",arr[i]);
-printf("\n");
-}
-heapsort(arr,n);
-printf("descending order");
-for(i=n-1;i>=0;i--){
-printf("%d ", arr[i]);
-}
-getch();
-return 0;
-}
+
+
 #include <stdio.h>
-void heapify(int arr[],int n,int i){
-int smallest=i;
-int left=2*i+1;
-int right=2*i+2;
-if(left<n && arr[left]<arr[smallest])
-smallest=left;
-if(right<n && arr[right]<arr[smallest])
-smallest=right;
+#include <stdlib.h>
 
-if(smallest!=i){
-int temp=arr[i];
-arr[i]=arr[smallest];
-arr[smallest]=temp;
-heapify(arr,n,smallest);
-}}
-void heapsort(int arr[],int n){
-int i;
-for(i=n/2-1;i>=0;i--){
-heapify(arr,n,i);
-}
-for(i=n-1;i>0;i--){
-int temp=arr[0];
-arr[0]=arr[i];
-arr[i]=temp;
-heapify(arr,i,0);
-}
-}
-int main(){
-int i;
-int arr[]={13,12,8,67,7};
-int n=sizeof(arr)/sizeof(arr[0]);
-clrscr();
-printf("original array:");
-for(i=0;i<n;i++){
-printf("%d",arr[i]);
-printf("\n");
-}
-heapsort(arr,n);
-printf("ascending order");
-for(i=n-1;i>=0;i--){
-printf("%d ", arr[i]);
-}
-getch();
-return 0;
+#define MAX_VERTICES 100
+
+struct Edge {
+    int src, dest, weight;
+};
+
+struct Graph {
+    int V, E;
+    struct Edge* edges;
+};
+
+struct Subset {
+    int parent;
+    int rank;
+};
+
+struct Graph* createGraph(int V, int E) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->V = V;
+    graph->E = E;
+    graph->edges = (struct Edge*)malloc(E * sizeof(struct Edge));
+    return graph;
 }
 
+int find(struct Subset subsets[], int i) {
+    if (subsets[i].parent != i)
+        subsets[i].parent = find(subsets, subsets[i].parent);
+
+    return subsets[i].parent;
+}
+
+void Union(struct Subset subsets[], int x, int y) {
+    int xroot = find(subsets, x);
+    int yroot = find(subsets, y);
+
+    if (subsets[xroot].rank < subsets[yroot].rank)
+        subsets[xroot].parent = yroot;
+    else if (subsets[xroot].rank > subsets[yroot].rank)
+        subsets[yroot].parent = xroot;
+    else {
+        subsets[yroot].parent = xroot;
+        subsets[xroot].rank++;
+    }
+}
+
+int compareEdges(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+void kruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge result[V];
+    int e = 0;
+    int i = 0;
+
+    qsort(graph->edges, graph->E, sizeof(graph->edges[0]), compareEdges);
+
+    struct Subset* subsets = (struct Subset*)malloc(V * sizeof(struct Subset));
+
+    for (int v = 0; v < V; v++) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    while (e < V - 1 && i < graph->E) {
+        struct Edge next_edge = graph->edges[i++];
+
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+
+        if (x != y) {
+            result[e++] = next_edge;
+            Union(subsets, x, y);
+        }
+    }
+
+    printf("Edges in the Minimum Spanning Tree:\n");
+    for (int i = 0; i < e; i++)
+        printf("%d -- %d == %d\n", result[i].src, result[i].dest, result[i].weight);
+
+    free(subsets);
+}
+
+int main() {
+    int V = 4; // Number of vertices in the graph
+    int E = 5; // Number of edges in the graph
+    struct Graph* graph = createGraph(V, E);
+
+    // Add edge 0-1
+    graph->edges[0].src = 0;
+    graph->edges[0].dest = 1;
+    graph->edges[0].weight = 10;
+
+    // Add edge 0-2
+    graph->edges[1].src = 0;
+    graph->edges[1].dest = 2;
+    graph->edges[1].weight = 6;
+
+    // Add edge 0-3
+    graph->edges[2].src = 0;
+    graph->edges[2].dest = 3;
+    graph->edges[2].weight = 5;
+
+    // Add edge 1-3
+    graph->edges[3].src = 1;
+    graph->edges[3].dest = 3;
+    graph->edges[3].weight = 15;
+
+    // Add edge 2-3
+    graph->edges[4].src = 2;
+    graph->edges[4].dest = 3;
+    graph->edges[4].weight = 4;
+
+    kruskalMST(graph);
+
+    free(graph->edges);
+    free(graph);
+
+    return 0;
+}
