@@ -1,1 +1,60 @@
+12.Write a C program to implement the decimal to binary conversion using stack
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define MAX_SIZE 100  // Structure to represent a stack
+struct Stack {
+int items[MAX_SIZE];
+int top;
+};  // Function to initialize an empty stack
+void initialize(struct Stack* stack) {
+stack->top = -1;
+}  //   Function to check if the stack is empty
+int isEmpty(struct Stack* stack) {
+return stack->top == -1;
+}// Function to push an item onto the stack
+void push(struct Stack* stack, int item) {
+if (stack->top == MAX_SIZE - 1) {
+printf("Stack Overflow\n");
+getch();  // Wait for a key press before exiting
+exit(1);
+}
+stack->items[++stack->top] = item;
+}  // Function to pop an item from the stack
+int pop(struct Stack* stack) {
+if (isEmpty(stack)) {
+printf("Stack Underflow\n");
+getch();  // Wait for a key press before exiting
+exit(1);
+}
+return stack->items[stack->top--];
+}  // Function to convert decimal to binary using a stack
+void decimalToBinary(int decimal) {
+struct Stack binaryStack;
+initialize(&binaryStack);
+printf("Binary Equivalent: ");
+while (decimal > 0) {
+int remainder = decimal % 2;
+push(&binaryStack, remainder);
+decimal /= 2;
+}
+while (!isEmpty(&binaryStack)) {
+printf("%d", pop(&binaryStack));
+}
+printf("\n");
+}
+int main() {
+int decimal;   // Input from the user
+clrscr();  // Clear screen
+printf("Enter a decimal number: ");
+scanf("%d", &decimal);   // Convert and display the binary equivalent
+decimalToBinary(decimal);   // Wait for a key press before exiting
+getch();  // Wait for a key press
+clrscr();  // Clear screen
+return 0;
+}
+
 
