@@ -1,1 +1,198 @@
+28. Write a C program to implement a Threaded Binary tree and traverse it in-order
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+int te = 0, b[40], size = 0;
+struct node {
+int data;
+struct node* left;
+struct node* right;
+int lf;
+int rf;
+};
+struct node* newNode(int data) {
+struct node* new = (struct node*)malloc(sizeof(struct node));
+new->data = data;
+new->left = NULL;
+new->right = NULL;
+new->lf = 0;
+new->rf = 0;
+return new;
+}
+void insert(struct node** root, int data) {
+struct node* n = newNode(data);
+struct node* temp = *root;
+struct node* parent = NULL;
+if (*root == NULL) {
+*root = n;
+te++;
+return;
+}
+while (1) {
+parent = temp;
+if (data < temp->data) {
+if (temp->left == NULL || temp->lf == 1) {
+temp->lf = 0;
+temp->left = n;
+n->rf = 1;
+n->lf = 1;
+n->right = temp;
+n->left = root;
+te++;
+return;
+} else {
+temp = temp->left;
+}
+} else if (data > temp->data) {
+if (temp->right == NULL || temp->rf == 1) {
+temp->rf = 0;
+temp->right = n;
+n->rf = 1;
+n->lf = 1;
+n->left = root;
+n->right = temp;
+te++;
+return;
+} else {
+temp = temp->right;
+}
+}
+}
+}
+void right(struct node** root, int data) {
+struct node* n = newNode(data);
+struct node* temp = *root;
+struct node* parent = NULL;
+if (*root == NULL) {
+*root = n;
+te++;
+return;
+}
+while (1) {
+parent = temp;
+if (data < temp->data) {
+if (temp->left == NULL) {
+temp->left = n;
+n->rf = 1;
+n->right = temp;
+te++;
+return;
+} else {
+temp = temp->left;
+}
+} else if (data > temp->data) {
+if (temp->right == NULL || temp->rf == 1) {
+temp->rf = 0;
+temp->right = n;
+n->rf = 1;
+n->right = root;
+te++;
+return;
+} else {
+temp = temp->right;
+}
+}
+}
+}
+void left(struct node** root, int data) {
+struct node* n = newNode(data);
+struct node* temp = *root;
+struct node* parent = NULL;
+if (*root == NULL) {
+*root = n;
+te++;
+return;
+}
+while (1) {
+parent = temp;
+if (data < temp->data) {
+if (temp->left == NULL || temp->lf == 1) {
+temp->lf = 0;
+temp->left = n;
+n->lf = 1;
+n->left = root;
+te++;
+return;
+} else {
+temp = temp->left;
+}
+} else if (data > temp->data) {
+if (temp->right == NULL) {
+temp->right = n;
+n->lf = 1;
+n->left = temp;
+te++;
+return;
+} else {
+temp = temp->right;
+}
+}
+}
+}
+void inorder(struct node* root) {
+if (root == NULL) {
+return;
+}
+if (root->lf == 0) {
+inorder(root->left);
+}
+b[size] = root->data;
+size++;
+printf("%d ", root->data);
+if (root->rf == 0) {
+inorder(root->right);
+}
+}
+void postorder(struct node* root) {
+if (root == NULL) {
+return;
+}
+if (root->lf == 0) {
+postorder(root->left);
+}
+if (root->rf == 0) {
+postorder(root->right);
+}
+printf("%d ", root->data);
+}
+void preorder(struct node* root) {
+if (root == NULL) {
+return;
+}
+printf("%d ", root->data);
+if (root->lf == 0) {
+preorder(root->left);
+}
+if (root->rf == 0) {
+preorder(root->right);
+}
+}
+int main() {
+struct node* root = NULL;
+struct node* root1 = NULL;
+struct node* root2 = NULL;
+int no,i, p;
+printf("Enter 5 numbers:\n");
+for (i = 0; i < 5; ++i) {
+scanf("%d", &no);
+insert(&root, no);
+right(&root1, no);
+left(&root2, no);
+}
+printf("\nPreorder: ");
+preorder(root);
+printf("\nInorder: ");
+inorder(root);
+printf("\nPostorder: ");
+postorder(root);
+size = 0;
+printf("\nRight: ");
+inorder(root1);
+printf("\nLeft: ");
+size = 0;
+inorder(root2);
+return 0;
+}
 
