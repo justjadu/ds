@@ -1,1 +1,49 @@
+35.Write a C program to accept a graph from user, represent in adjacency matrix and traverse it in-order
 
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <conio.h>
+#define MAX_VERTICES 100 // Adjust the maximum vertices as needed
+// Function to traverse the graph in in-order using adjacency matrix
+void inOrderTraversal(int adjMatrix[MAX_VERTICES][MAX_VERTICES], int vertices, int currentVertex, int *visited) {
+int i;
+visited[currentVertex] = 1;
+printf("In-Order Traversal: %d\n", currentVertex + 1);
+for (i = 0; i < vertices; i++) {
+if (adjMatrix[currentVertex][i] && !visited[i]) {
+inOrderTraversal(adjMatrix, vertices, i, visited);
+}
+}
+}
+int main() {
+int visited[MAX_VERTICES] = {0};
+int vertices, edges, i, j, k;
+int adjMatrix[MAX_VERTICES][MAX_VERTICES] = {0};
+printf("Enter the number of vertices: ");
+scanf("%d", &vertices);
+// Create adjacency matrix
+// Accept edges from the user
+printf("Enter the number of edges: ");
+scanf("%d", &edges);
+printf("Enter the edges (src dest):\n");
+for (k = 0; k < edges; k++) {
+scanf("%d %d", &i, &j);
+// Check if vertices are within the valid range
+if (i >= 1 && i <= vertices && j >= 1 && j <= vertices) {
+adjMatrix[i - 1][j - 1] = 1;
+} else {
+printf("Invalid vertices. Please enter valid vertices.\n");
+k--; // Decrement k to re-enter the edge
+}
+}
+// Perform in-order traversal
+for (i = 0; i < vertices; i++) {
+if (!visited[i]) {
+inOrderTraversal(adjMatrix, vertices, i, visited);
+}
+}
+return 0;
+}
